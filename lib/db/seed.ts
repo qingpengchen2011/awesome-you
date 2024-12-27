@@ -1,7 +1,7 @@
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
 import { users, teams, teamMembers } from './schema';
-import { hashPassword } from '@/lib/auth/session';
+import { randomUUID } from 'crypto';
 
 async function createStripeProducts() {
   console.log('Creating Stripe products and prices...');
@@ -40,45 +40,58 @@ async function createStripeProducts() {
 }
 
 async function seed() {
-  const email = 'test@test.com';
-  const password = 'admin123';
-  const passwordHash = await hashPassword(password);
+  try {
+    const email = 'test@test.com';
+    const name = 'Test User';
 
-  const [user] = await db
-    .insert(users)
-    .values([
-      {
-        email: email,
-        passwordHash: passwordHash,
-        role: "owner",
-      },
-    ])
-    .returning();
+    const [user] = await db
+      .insert(users)
+      .values([
+        {
+          id: randomUUID(),
+          email: email,
+          name: name,
+          role: "owner",
+          emailVerified: new Date(),
+        },
+      ]
+      )
+      .returning();
 
-  console.log('Initial user created.');
+    console.log('Initial user created.')
 
-  const [team] = await db
-    .insert(teams)
-    .values({
-      name: 'Test Team',
-    })
-    .returning();
+    const [team] = await db
+      .insert(teams)
+      .values({
+        name: 'Test Team',
+      })
+      .returning();
 
-  await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
-    role: 'owner',
-  });
+    await db.insert(teamMembers).values({
+      teamId: team.id,
+      userId: user.id,
+      role: 'owner',
+    });
 
-  await createStripeProducts();
+    await createStripeProducts();
+    console.log('Seed completed successfully');
+  } catch (error) {
+    console.error('Seed process failed:', error);
+    throw error;
+  } finally {
+    await db.end();
+  }
 }
 
-seed()
-  .catch((error) => {
-    console.error('Seed process failed:', error);
-    process.exit(1);
-  })
-  .finally(() => {
-    console.log('Seed process finished. Exiting...');
-    process.exit(0);
-  });
+// Only run seed() if this file is being run directly
+if (require.main === module) {
+  seed()
+    .catch((error) => {
+      console.error('Seed process failed:', error);
+      process.exit(1);
+    })
+    .finally(() => {
+      console.log('Seed process finished. Exiting...');
+      process.exit(0);
+    });
+}

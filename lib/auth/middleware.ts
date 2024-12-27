@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { TeamDataWithMembers, User } from '@/lib/db/schema';
 import { getTeamForUser, getUser } from '@/lib/db/queries';
 import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export type ActionState = {
   error?: string;
@@ -39,9 +41,14 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
   action: ValidatedActionWithUserFunction<S, T>
 ) {
   return async (prevState: ActionState, formData: FormData): Promise<T> => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      throw new Error('User is not authenticated');
+    }
+
     const user = await getUser();
     if (!user) {
-      throw new Error('User is not authenticated');
+      throw new Error('User not found');
     }
 
     const result = schema.safeParse(Object.fromEntries(formData));
@@ -54,22 +61,27 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
 }
 
 type ActionWithTeamFunction<T> = (
-  formData: FormData,
-  team: TeamDataWithMembers
+  team: TeamDataWithMembers,
+  user: User
 ) => Promise<T>;
 
 export function withTeam<T>(action: ActionWithTeamFunction<T>) {
-  return async (formData: FormData): Promise<T> => {
+  return async (): Promise<T> => {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      throw new Error('User is not authenticated');
+    }
+
     const user = await getUser();
     if (!user) {
-      redirect('/sign-in');
+      throw new Error('User not found');
     }
 
     const team = await getTeamForUser(user.id);
     if (!team) {
-      throw new Error('Team not found');
+      redirect('/onboarding');
     }
 
-    return action(formData, team);
+    return action(team, user);
   };
 }

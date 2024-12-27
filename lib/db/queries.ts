@@ -1,32 +1,19 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
 import { activityLogs, teamMembers, teams, users } from './schema';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth/session';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth/config';
 
 export async function getUser() {
-  const sessionCookie = (await cookies()).get('session');
-  if (!sessionCookie || !sessionCookie.value) {
-    return null;
-  }
-
-  const sessionData = await verifyToken(sessionCookie.value);
-  if (
-    !sessionData ||
-    !sessionData.user ||
-    typeof sessionData.user.id !== 'number'
-  ) {
-    return null;
-  }
-
-  if (new Date(sessionData.expires) < new Date()) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
     return null;
   }
 
   const user = await db
     .select()
     .from(users)
-    .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
+    .where(and(eq(users.id, session.user.id), isNull(users.deletedAt)))
     .limit(1);
 
   if (user.length === 0) {
@@ -49,81 +36,80 @@ export async function getTeamByStripeCustomerId(customerId: string) {
 export async function updateTeamSubscription(
   teamId: number,
   subscriptionData: {
-    stripeSubscriptionId: string | null;
-    stripeProductId: string | null;
-    planName: string | null;
-    subscriptionStatus: string;
+    stripeSubscriptionId?: string | null;
+    stripeCustomerId?: string | null;
+    stripeProductId?: string | null;
+    planName?: string | null;
+    subscriptionStatus?: string | null;
   }
 ) {
-  await db
-    .update(teams)
-    .set({
-      ...subscriptionData,
-      updatedAt: new Date(),
-    })
-    .where(eq(teams.id, teamId));
+  return db.update(teams).set(subscriptionData).where(eq(teams.id, teamId));
 }
 
-export async function getUserWithTeam(userId: number) {
+export async function getUserWithTeam(userId: string) {
   const result = await db
     .select({
       user: users,
-      teamId: teamMembers.teamId,
+      team: teams,
+      teamMember: teamMembers,
     })
     .from(users)
     .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
+    .leftJoin(teams, eq(teamMembers.teamId, teams.id))
     .where(eq(users.id, userId))
     .limit(1);
 
-  return result[0];
+  return result.length > 0 ? result[0] : null;
 }
 
-export async function getActivityLogs() {
-  const user = await getUser();
-  if (!user) {
-    throw new Error('User not authenticated');
-  }
-
-  return await db
+export async function getActivityLogs(teamId: number) {
+  return db
     .select({
       id: activityLogs.id,
       action: activityLogs.action,
-      timestamp: activityLogs.timestamp,
-      ipAddress: activityLogs.ipAddress,
-      userName: users.name,
+      createdAt: activityLogs.createdAt,
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+      },
     })
     .from(activityLogs)
     .leftJoin(users, eq(activityLogs.userId, users.id))
-    .where(eq(activityLogs.userId, user.id))
-    .orderBy(desc(activityLogs.timestamp))
-    .limit(10);
+    .where(eq(activityLogs.teamId, teamId))
+    .orderBy(desc(activityLogs.createdAt))
+    .limit(50);
 }
 
-export async function getTeamForUser(userId: number) {
-  const result = await db.query.users.findFirst({
-    where: eq(users.id, userId),
-    with: {
-      teamMembers: {
-        with: {
-          team: {
-            with: {
-              teamMembers: {
-                with: {
-                  user: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      email: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+export async function getTeamForUser(userId: string) {
+  const result = await db
+    .select({
+      team: teams,
+      teamMembers: teamMembers,
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
       },
-    },
-  });
+    })
+    .from(teams)
+    .innerJoin(teamMembers, eq(teams.id, teamMembers.teamId))
+    .innerJoin(users, eq(teamMembers.userId, users.id))
+    .where(eq(teamMembers.userId, userId))
+    .limit(1);
 
-  return result?.teamMembers[0]?.team || null;
+  if (result.length === 0) {
+    return null;
+  }
+
+  return {
+    ...result[0].team,
+    teamMembers: [
+      {
+        ...result[0].teamMembers,
+        user: result[0].user,
+      },
+    ],
+    user: result[0].user,
+  };
 }
