@@ -1,5 +1,5 @@
 {
-  "id": "b2be65ed-e36d-49ad-b1de-04e4a7e17ce9",
+  "id": "b839659d-364e-43a5-8b65-2c461427dfdd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -77,10 +77,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "account_userId_users_id_fk": {
-          "name": "account_userId_users_id_fk",
+        "account_userId_user_id_fk": {
+          "name": "account_userId_user_id_fk",
           "tableFrom": "account",
-          "tableTo": "users",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
@@ -105,8 +105,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.activity_logs": {
-      "name": "activity_logs",
+    "public.activityLogs": {
+      "name": "activityLogs",
       "schema": "",
       "columns": {
         "id": {
@@ -115,14 +115,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "team_id": {
-          "name": "team_id",
+        "teamId": {
+          "name": "teamId",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "userId": {
+          "name": "userId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -133,14 +133,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "ip_address": {
-          "name": "ip_address",
+        "ipAddress": {
+          "name": "ipAddress",
           "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -149,12 +149,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "activity_logs_team_id_teams_id_fk": {
-          "name": "activity_logs_team_id_teams_id_fk",
-          "tableFrom": "activity_logs",
-          "tableTo": "teams",
+        "activityLogs_teamId_team_id_fk": {
+          "name": "activityLogs_teamId_team_id_fk",
+          "tableFrom": "activityLogs",
+          "tableTo": "team",
           "columnsFrom": [
-            "team_id"
+            "teamId"
           ],
           "columnsTo": [
             "id"
@@ -162,12 +162,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "activity_logs_user_id_users_id_fk": {
-          "name": "activity_logs_user_id_users_id_fk",
-          "tableFrom": "activity_logs",
-          "tableTo": "users",
+        "activityLogs_userId_user_id_fk": {
+          "name": "activityLogs_userId_user_id_fk",
+          "tableFrom": "activityLogs",
+          "tableTo": "user",
           "columnsFrom": [
-            "user_id"
+            "userId"
           ],
           "columnsTo": [
             "id"
@@ -237,10 +237,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "authenticator_userId_users_id_fk": {
-          "name": "authenticator_userId_users_id_fk",
+        "authenticator_userId_user_id_fk": {
+          "name": "authenticator_userId_user_id_fk",
           "tableFrom": "authenticator",
-          "tableTo": "users",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
@@ -273,8 +273,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.invitations": {
-      "name": "invitations",
+    "public.invitation": {
+      "name": "invitation",
       "schema": "",
       "columns": {
         "id": {
@@ -324,10 +324,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "invitations_team_id_teams_id_fk": {
-          "name": "invitations_team_id_teams_id_fk",
-          "tableFrom": "invitations",
-          "tableTo": "teams",
+        "invitation_team_id_team_id_fk": {
+          "name": "invitation_team_id_team_id_fk",
+          "tableFrom": "invitation",
+          "tableTo": "team",
           "columnsFrom": [
             "team_id"
           ],
@@ -337,10 +337,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "invitations_invited_by_users_id_fk": {
-          "name": "invitations_invited_by_users_id_fk",
-          "tableFrom": "invitations",
-          "tableTo": "users",
+        "invitation_invited_by_user_id_fk": {
+          "name": "invitation_invited_by_user_id_fk",
+          "tableFrom": "invitation",
+          "tableTo": "user",
           "columnsFrom": [
             "invited_by"
           ],
@@ -357,12 +357,12 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.sessions": {
-      "name": "sessions",
+    "public.session": {
+      "name": "session",
       "schema": "",
       "columns": {
-        "session_token": {
-          "name": "session_token",
+        "sessionToken": {
+          "name": "sessionToken",
           "type": "text",
           "primaryKey": true,
           "notNull": true
@@ -382,10 +382,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "sessions_user_id_users_id_fk": {
-          "name": "sessions_user_id_users_id_fk",
-          "tableFrom": "sessions",
-          "tableTo": "users",
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
@@ -402,8 +402,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.team_members": {
-      "name": "team_members",
+    "public.teamMembers": {
+      "name": "teamMembers",
       "schema": "",
       "columns": {
         "id": {
@@ -412,14 +412,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "userId": {
+          "name": "userId",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "team_id": {
-          "name": "team_id",
+        "teamId": {
+          "name": "teamId",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -430,8 +430,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "joined_at": {
-          "name": "joined_at",
+        "joinedAt": {
+          "name": "joinedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -440,12 +440,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "team_members_user_id_users_id_fk": {
-          "name": "team_members_user_id_users_id_fk",
-          "tableFrom": "team_members",
-          "tableTo": "users",
+        "teamMembers_userId_user_id_fk": {
+          "name": "teamMembers_userId_user_id_fk",
+          "tableFrom": "teamMembers",
+          "tableTo": "user",
           "columnsFrom": [
-            "user_id"
+            "userId"
           ],
           "columnsTo": [
             "id"
@@ -453,12 +453,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "team_members_team_id_teams_id_fk": {
-          "name": "team_members_team_id_teams_id_fk",
-          "tableFrom": "team_members",
-          "tableTo": "teams",
+        "teamMembers_teamId_team_id_fk": {
+          "name": "teamMembers_teamId_team_id_fk",
+          "tableFrom": "teamMembers",
+          "tableTo": "team",
           "columnsFrom": [
-            "team_id"
+            "teamId"
           ],
           "columnsTo": [
             "id"
@@ -473,8 +473,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.teams": {
-      "name": "teams",
+    "public.team": {
+      "name": "team",
       "schema": "",
       "columns": {
         "id": {
@@ -489,46 +489,46 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "stripe_customer_id": {
-          "name": "stripe_customer_id",
+        "stripeCustomerId": {
+          "name": "stripeCustomerId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "stripe_subscription_id": {
-          "name": "stripe_subscription_id",
+        "stripeSubscriptionId": {
+          "name": "stripeSubscriptionId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "stripe_product_id": {
-          "name": "stripe_product_id",
+        "stripeProductId": {
+          "name": "stripeProductId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "plan_name": {
-          "name": "plan_name",
+        "planName": {
+          "name": "planName",
           "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
-        "subscription_status": {
-          "name": "subscription_status",
+        "subscriptionStatus": {
+          "name": "subscriptionStatus",
           "type": "varchar(20)",
           "primaryKey": false,
           "notNull": false
@@ -538,18 +538,18 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "teams_stripe_customer_id_unique": {
-          "name": "teams_stripe_customer_id_unique",
+        "team_stripeCustomerId_unique": {
+          "name": "team_stripeCustomerId_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "stripe_customer_id"
+            "stripeCustomerId"
           ]
         },
-        "teams_stripe_subscription_id_unique": {
-          "name": "teams_stripe_subscription_id_unique",
+        "team_stripeSubscriptionId_unique": {
+          "name": "team_stripeSubscriptionId_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "stripe_subscription_id"
+            "stripeSubscriptionId"
           ]
         }
       },
@@ -557,8 +557,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.users": {
-      "name": "users",
+    "public.user": {
+      "name": "user",
       "schema": "",
       "columns": {
         "id": {
@@ -579,8 +579,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "email_verified": {
-          "name": "email_verified",
+        "emailVerified": {
+          "name": "emailVerified",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
@@ -598,22 +598,22 @@
           "notNull": true,
           "default": "'member'"
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "deleted_at": {
-          "name": "deleted_at",
+        "deletedAt": {
+          "name": "deletedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
@@ -623,8 +623,8 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "user_email_unique": {
+          "name": "user_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
@@ -635,8 +635,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.verification_tokens": {
-      "name": "verification_tokens",
+    "public.verificationToken": {
+      "name": "verificationToken",
       "schema": "",
       "columns": {
         "identifier": {
@@ -661,8 +661,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "verification_tokens_identifier_token_pk": {
-          "name": "verification_tokens_identifier_token_pk",
+        "verificationToken_identifier_token_pk": {
+          "name": "verificationToken_identifier_token_pk",
           "columns": [
             "identifier",
             "token"

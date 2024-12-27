@@ -10,62 +10,62 @@ import {
 import { relations } from 'drizzle-orm';
 import type { AdapterAccountType } from '@auth/core/adapters';
 
-export const users = pgTable('users', {
+export const users = pgTable('user', {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar('name', { length: 100 }),
   email: varchar('email', { length: 255 }).notNull().unique(),
-  emailVerified: timestamp('email_verified', { mode: 'date' }),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
   role: varchar('role', { length: 20 }).notNull().default('member'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  deletedAt: timestamp('deleted_at'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+  deletedAt: timestamp('deletedAt'),
 });
 
-export const teams = pgTable('teams', {
+export const teams = pgTable('team', {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar('name', { length: 100 }).notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  stripeCustomerId: text('stripe_customer_id').unique(),
-  stripeSubscriptionId: text('stripe_subscription_id').unique(),
-  stripeProductId: text('stripe_product_id'),
-  planName: varchar('plan_name', { length: 50 }),
-  subscriptionStatus: varchar('subscription_status', { length: 20 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+  stripeCustomerId: text('stripeCustomerId').unique(),
+  stripeSubscriptionId: text('stripeSubscriptionId').unique(),
+  stripeProductId: text('stripeProductId'),
+  planName: varchar('planName', { length: 50 }),
+  subscriptionStatus: varchar('subscriptionStatus', { length: 20 }),
 });
 
-export const teamMembers = pgTable('team_members', {
+export const teamMembers = pgTable('teamMembers', {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  userId: text('user_id')
+  userId: text('userId')
     .notNull()
     .references(() => users.id),
-  teamId: text('team_id')
+  teamId: text('teamId')
     .notNull()
     .references(() => teams.id),
   role: varchar('role', { length: 50 }).notNull(),
-  joinedAt: timestamp('joined_at').notNull().defaultNow(),
+  joinedAt: timestamp('joinedAt').notNull().defaultNow(),
 });
 
-export const activityLogs = pgTable('activity_logs', {
+export const activityLogs = pgTable('activityLogs', {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  teamId: text('team_id')
+  teamId: text('teamId')
     .notNull()
     .references(() => teams.id),
-  userId: text('user_id').references(() => users.id),
+  userId: text('userId').references(() => users.id),
   action: varchar('action', { length: 50 }).notNull(),
-  ipAddress: varchar('ip_address', { length: 50 }),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
+  ipAddress: varchar('ipAddress', { length: 50 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
 });
 
-export const invitations = pgTable('invitations', {
+export const invitations = pgTable('invitation', {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -103,8 +103,8 @@ export const accounts = pgTable(
   ]
 );
 
-export const sessions = pgTable('sessions', {
-  sessionToken: text('session_token').notNull().primaryKey(),
+export const sessions = pgTable('session', {
+  sessionToken: text('sessionToken').notNull().primaryKey(),
   userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
@@ -112,15 +112,15 @@ export const sessions = pgTable('sessions', {
 });
 
 export const verificationTokens = pgTable(
-  'verification_tokens',
+  'verificationToken',
   {
     identifier: text('identifier').notNull(),
     token: text('token').notNull(),
     expires: timestamp('expires', { mode: 'date' }).notNull(),
   },
-  (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  (vt) => [
+    primaryKey({ columns: [vt.identifier, vt.token] })
+    ]
 );
 
 export const authenticators = pgTable(
@@ -137,12 +137,12 @@ export const authenticators = pgTable(
     credentialBackedUp: boolean("credentialBackedUp").notNull(),
     transports: text("transports"),
   },
-  (authenticator) => ({
-    compositePK: primaryKey({
-      columns: [authenticator.userId, authenticator.credentialID],
-    }),
-  })
-)
+  (authenticator) => [
+    primaryKey({
+      columns: [authenticator.userId, authenticator.credentialID]
+    })
+  ]
+);
 
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
