@@ -2,6 +2,7 @@ import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
 import { users, teams, teamMembers } from './schema';
 import { randomUUID } from 'crypto';
+import { hashPassword } from '@/lib/auth/session';
 
 async function createStripeProducts() {
   console.log('Creating Stripe products and prices...');
@@ -40,47 +41,46 @@ async function createStripeProducts() {
 }
 
 async function seed() {
-  try {
-    const email = 'test@test.com';
-    const name = 'Test User';
+  const email = 'test@test.com';
+  const name = 'Test User';
+  const password = 'admin123';
 
-    const [user] = await db
-      .insert(users)
-      .values([
-        {
-          id: randomUUID(),
-          email: email,
-          name: name,
-          role: "owner",
-          emailVerified: new Date(),
-        },
-      ]
-      )
-      .returning();
+  const [user] = await db
+    .insert(users)
+    .values([
+      {
+        id: randomUUID(),
+        name,
+        email,
+        role: 'owner',
+        emailVerified: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]
+    )
+    .returning();
 
-    console.log('Initial user created.')
+  console.log('Initial user created.')
 
-    const [team] = await db
-      .insert(teams)
-      .values({
-        name: 'Test Team',
-      })
-      .returning();
+  const [team] = await db
+    .insert(teams)
+    .values([
+      {
+      name: 'Test Team',
+    }
+  ])
+    .returning();
 
-    await db.insert(teamMembers).values({
-      teamId: team.id,
-      userId: user.id,
-      role: 'owner',
-    });
+  await db.insert(teamMembers).values({
+    teamId: team.id,
+    userId: user.id,
+    role: 'owner',
+  });
 
-    await createStripeProducts();
-    console.log('Seed completed successfully');
-  } catch (error) {
-    console.error('Seed process failed:', error);
-    throw error;
-  } finally {
-    await db.end();
-  }
+  await createStripeProducts();
+  console.log('Seed completed successfully');
+
 }
 
 // Only run seed() if this file is being run directly

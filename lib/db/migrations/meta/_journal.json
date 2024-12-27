@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1726443359662,
-      "tag": "0000_soft_the_anarchist",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1703652614000,
-      "tag": "0001_next_auth",
+      "when": 1735284910339,
+      "tag": "0000_handy_khan",
       "breakpoints": true
     }
   ]
