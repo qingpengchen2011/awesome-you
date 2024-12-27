@@ -69,15 +69,15 @@ export const invitations = pgTable('invitation', {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  teamId: text('team_id')
+  teamId: text('teamId')
     .notNull()
     .references(() => teams.id),
   email: varchar('email', { length: 255 }).notNull(),
   role: varchar('role', { length: 50 }).notNull(),
-  invitedBy: text('invited_by')
+  invitedBy: text('invitedBy')
     .notNull()
     .references(() => users.id),
-  invitedAt: timestamp('invited_at').notNull().defaultNow(),
+  invitedAt: timestamp('invitedAt').notNull().defaultNow(),
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
@@ -105,7 +105,7 @@ export const accounts = pgTable(
 
 export const sessions = pgTable('session', {
   sessionToken: text('sessionToken').notNull().primaryKey(),
-  userId: text('user_id')
+  userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   expires: timestamp('expires', { mode: 'date' }).notNull(),

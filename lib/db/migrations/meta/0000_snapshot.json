@@ -1,5 +1,5 @@
 {
-  "id": "b839659d-364e-43a5-8b65-2c461427dfdd",
+  "id": "8c5b4490-6d3e-4af9-947d-6464585ec1b2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -283,8 +283,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "team_id": {
-          "name": "team_id",
+        "teamId": {
+          "name": "teamId",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -301,14 +301,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "invited_by": {
-          "name": "invited_by",
+        "invitedBy": {
+          "name": "invitedBy",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "invited_at": {
-          "name": "invited_at",
+        "invitedAt": {
+          "name": "invitedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -324,12 +324,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "invitation_team_id_team_id_fk": {
-          "name": "invitation_team_id_team_id_fk",
+        "invitation_teamId_team_id_fk": {
+          "name": "invitation_teamId_team_id_fk",
           "tableFrom": "invitation",
           "tableTo": "team",
           "columnsFrom": [
-            "team_id"
+            "teamId"
           ],
           "columnsTo": [
             "id"
@@ -337,12 +337,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "invitation_invited_by_user_id_fk": {
-          "name": "invitation_invited_by_user_id_fk",
+        "invitation_invitedBy_user_id_fk": {
+          "name": "invitation_invitedBy_user_id_fk",
           "tableFrom": "invitation",
           "tableTo": "user",
           "columnsFrom": [
-            "invited_by"
+            "invitedBy"
           ],
           "columnsTo": [
             "id"
@@ -367,8 +367,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "userId": {
+          "name": "userId",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -382,12 +382,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "session_user_id_user_id_fk": {
-          "name": "session_user_id_user_id_fk",
+        "session_userId_user_id_fk": {
+          "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
           "columnsFrom": [
-            "user_id"
+            "userId"
           ],
           "columnsTo": [
             "id"
