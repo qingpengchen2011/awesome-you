@@ -13,12 +13,13 @@ import {
   type NewActivityLog,
   ActivityType,
   invitations,
+  User,
 } from '@/lib/db/schema';
 import { redirect } from 'next/navigation';
 import { createCheckoutSession } from '@/lib/payments/stripe';
 import { getUser, getUserWithTeam } from '@/lib/db/queries';
 import { validatedActionWithUser } from '@/lib/auth/middleware';
-import { signIn } from 'next-auth/react';
+import { signIn as NextAuthSignIn } from 'next-auth/react';
 
 async function logActivity(
   teamId: number | null | undefined,
@@ -155,7 +156,13 @@ export const inviteTeamMember = validatedActionWithUser(
 );
 
 export async function signIn() {
-  await signIn('credentials', {
+  await NextAuthSignIn('credentials', {
     redirect: false,
   });
+}
+export async function signOut() {
+  const user = (await getUser()) as User;
+  const userWithTeam = await getUserWithTeam(user.id);
+  // await logActivity(userWithTeam?.teamId, user.id, ActivityType.SIGN_OUT);
+  // (await cookies()).delete('session');
 }
